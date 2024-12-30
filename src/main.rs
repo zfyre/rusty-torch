@@ -1,13 +1,42 @@
-mod storage;
-use storage::Storage;
+mod backend;
+use backend::{backend::TensorBackend, Cpu_backend::CpuTensorBackend};
 
-// test imports
-use storage::utils::{DataPtr, DataType, Device};
 
 fn main() {
-    let stg: Storage = Storage::new(10, DataType::Float32, Device::CPU);
+    let a = CpuTensorBackend::<f32>::new(&[3, 2], &[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
+    println!("{:?}", a);
+
+    let v = a.get(&[1,1]);
+    println!("{:?}", v);
+
+    a.print();
     
-    println!("Number of elements: {}", stg.size_);
-    println!("vector of values: {:?}", stg.data_ptr_);
-    println!("the size of vector of buffer assigned: {:?}", stg.data_ptr_.capacity());
-}   
+}
+
+
+fn iterate_display<T: Iterator> (itr: T)
+where
+    T::Item: std::fmt::Display,
+{
+    for i in itr.enumerate() {
+        print!("{} ", i.1);
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use crate::iterate_display;
+
+
+    #[test]
+    fn test_generic_iterator() {
+        let a = (1, 2, 3);
+        let b = [4, 5, 6];
+
+        // iterate_display(a.iter()); // as a matter of fact iterators are not implemented by tuples
+        iterate_display(b.iter());
+
+    }
+
+}
